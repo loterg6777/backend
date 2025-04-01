@@ -18,7 +18,7 @@ const initialize = (app) => {
     app.post(`${USERS_URL}/login`, UserController.loginPage)
 
     //PAGINA SECRETA
-    app.get(`${USERS_URL}/dashboard`, autenticarMid, UserController.dashBoard)
+    app.get(`${USERS_URL}/dashboard`, UserController.dashBoard)
 
 }
 
