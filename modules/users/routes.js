@@ -1,5 +1,7 @@
 const UserController = require('./controller');
-const autenticarMid = require('../../middlewares/middlewares');
+//const autenticarMid = require('../../middlewares/middlewares');
+//   app.patch(USERS_URL, autenticarMid, UserController.criarUsuario)
+
 
 const USERS_URL = '/usuarios'
 
@@ -8,9 +10,9 @@ const initialize = (app) => {
     app.get(USERS_URL, UserController.buscarUsuario)
 
     app.post(USERS_URL, UserController.criarUsuario)
-    app.patch(`${USERS_URL}/:id`, autenticarMid, UserController.atualizarUsuario)
-    app.delete(`${USERS_URL}/:id`, autenticarMid, UserController.deletarUsuario)
-    app.delete(`${USERS_URL}`, autenticarMid, UserController.deletarVariosUsuarios)
+    app.patch(`${USERS_URL}/:id`, UserController.atualizarUsuario)
+    app.delete(`${USERS_URL}/:id`, UserController.deletarUsuario)
+    app.delete(`${USERS_URL}`, UserController.deletarVariosUsuarios)
 
     //LOGIN
     app.post(`${USERS_URL}/login`, UserController.loginPage)
