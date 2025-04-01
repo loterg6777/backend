@@ -1,73 +1,84 @@
-const JWT = require('../../helpers/jwt');
-
-// CONTROLE DE USUARIOS
 const UserService = require('./service');
 
 // BUSCA TODOS USUARIOS POR DOCUMENTO
 const buscarUsuario = async (req, res) => {
-    const {documento} = req.query
-    console.log(req.query) //=
-    const usuarios = await UserService.buscarUsuario({documento})
-    res.send(usuarios)
+    const { documento } = req.query;
+    console.log(req.query); // Exibindo query para debug
+    const usuarios = await UserService.buscarUsuario({ documento });
+    res.send(usuarios);
 }
+
 // CRIAR USUARIOS
 const criarUsuario = async (req, res) => {
-    const novoUsuario = req.body
-    await UserService.criarUsuario(novoUsuario)
-    res.send(novoUsuario)
+    const novoUsuario = req.body;
+    await UserService.criarUsuario(novoUsuario);
+    res.send(novoUsuario);
 }
+
 // ATUALIZA USUARIO
 const atualizarUsuario = async (req, res) => {
-    const id = req.params.id
-    const changes = req.body
+    const id = req.params.id;
+    const changes = req.body;
 
-    const usuarioAtualizado = await UserService.atualizarUsuario(id, changes)
+    const usuarioAtualizado = await UserService.atualizarUsuario(id, changes);
 
-    res.send(usuarioAtualizado)
+    res.send(usuarioAtualizado);
 }
+
 // DELETA O USUARIO
 const deletarUsuario = async (req, res) => {
-    const id = req.params.id
-    await UserService.deletarUsuario(id)
-    res.send(`Usuario "${id}" deletado.`)
+    const id = req.params.id;
+    
+    // Removido o JWT. Não vamos verificar o token agora.
+    try {
+        await UserService.deletarUsuario(id); // Fazendo a exclusão do usuário
+        res.send(`Usuário com ID: "${id}" foi deletado com sucesso.`);
+    } catch (error) {
+        res.status(500).send('Erro ao deletar o usuário.');
+    }
 }
 
 // DELETA VÁRIOS USUÁRIOS
 const deletarVariosUsuarios = async (req, res) => {
-    const { users } = req.body
-    UserService.deletarVariosUsuarios(users)
-        .then(listaDeUsuarios => {
-            res.json({users: listaDeUsuarios})
-        })
-        .catch(err => console.log(err))
+    const { users } = req.body;
+    
+    try {
+        const listaDeUsuarios = await UserService.deletarVariosUsuarios(users);
+        res.json({ users: listaDeUsuarios });
+    } catch (err) {
+        console.log(err);
+        res.status(500).send('Erro ao deletar vários usuários.');
+    }
 }
 
-// AUTENTICAÇÃO LOGIN
+// AUTENTICAÇÃO LOGIN (Você pode voltar com JWT depois)
 const loginPage = async (req, res) => {
-    const { email, senha } = req.body
-    if (!email || !senha) return res.status(400).send('DEU ERRO')
+    const { email, senha } = req.body;
+    if (!email || !senha) return res.status(400).send('DEU ERRO');
 
-    const usuario = await UserService.buscarUsuarioEmail(email)
-    console.log(email)
-    console.log(usuario)
-    if (!usuario) return res.send(404).send('documento incorreto.')
+    const usuario = await UserService.buscarUsuarioEmail(email);
+    console.log(email);
+    console.log(usuario);
+    if (!usuario) return res.status(404).send('Documento incorreto.');
     
-    if (usuario.senha !== senha) return res.status(401).send('Senha errada.')
+    if (usuario.senha !== senha) return res.status(401).send('Senha errada.');
 
     const payload = {
         id: usuario._id,
         email: usuario.email,
         tipo: usuario.tipo
-    }
+    };
 
-    const token = JWT.sign(payload)
-
-    res.send({ token })
+    // JWT removido para teste.
+    // const token = JWT.sign(payload);
+    res.send({ message: "Login bem-sucedido" });
 }
-    
-// DECODE do JWT para Pegar Email ou Nome
+
+// DECODE do JWT para Pegar Email ou Nome (Você pode voltar com JWT depois)
 const dashBoard = async (req, res) => {
-    res.send(`Olá, ${req.decodedToken.email}, seja Bem-vindo`)
+    // Removendo a autenticação JWT para testes
+    // res.send(`Olá, ${req.decodedToken.email}, seja Bem-vindo`);
+    res.send('Olá, seja bem-vindo');
 }
 
 module.exports = {
@@ -78,4 +89,4 @@ module.exports = {
     deletarVariosUsuarios,
     loginPage,
     dashBoard
-}
+};
