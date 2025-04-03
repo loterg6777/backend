@@ -1,59 +1,74 @@
-const UserModel = require('./model');
-// SERVIÇOS DA API BACKEND
+const { UserModel } = require('./model'); // Importação correta
 
-// BUSCAR USUARIOS COM OU SEM DOCUMENTO
-const buscarUsuario = async ({documento}) => {
-    if(documento) {
-        const usuarios = await UserModel.find({documento})
-        return usuarios
-    } else {
-        const usuarios = await UserModel.find()
-        return usuarios
-    }
-}
 
-// RETORNA USUARIO POR EMAIL
+// BUSCAR USUÁRIOS COM OU SEM DOCUMENTO
+const buscarUsuario = async ({ documento }) => {
+    return documento 
+        ? await UserModel.find({ documento }) 
+        : await UserModel.find();
+};
+
+// RETORNAR USUÁRIO POR EMAIL
 const buscarUsuarioEmail = async (email) => {
-    const usuario = await UserModel.findOne({email})
-    return usuario
-}
+    return await UserModel.findOne({ email });
+};
 
-// RETORNA USUARIO POR DOCUMENTO
+// RETORNAR USUÁRIO POR DOCUMENTO
 const buscarUsuarioDocumento = async (documento) => {
-    const usuario = await UserModel.findOne({documento})
-    return usuario
-}
+    return await UserModel.findOne({ documento });
+};
 
-// CRIANDO USUARIO
+// CRIAR USUÁRIO
 const criarUsuario = async (novoUsuario) => {
-    const usuarioCriado = await UserModel.create(novoUsuario)
-    return usuarioCriado
-}
+    try {
+        const usuarioCriado = await UserModel.create(novoUsuario);
+        return usuarioCriado;
+    } catch (error) {
+        throw new Error(`Erro ao criar usuário: ${error.message}`);
+    }
+};
 
-// ATUALIZAR USUARIO
+// ATUALIZAR USUÁRIO
 const atualizarUsuario = async (id, changes) => {
-    const usuario = await UserModel.findById(id)
-    Object.assign(usuario, changes)
-    await usuario.save()
-    return usuario
-}
+    try {
+        const usuario = await UserModel.findById(id);
+        if (!usuario) throw new Error("Usuário não encontrado.");
+        
+        Object.assign(usuario, changes);
+        await usuario.save();
+        
+        return usuario;
+    } catch (error) {
+        throw new Error(`Erro ao atualizar usuário: ${error.message}`);
+    }
+};
 
-// DELETAR USUARIO
+// DELETAR USUÁRIO
 const deletarUsuario = async (id) => {
-    await UserModel.findByIdAndDelete(id)
-}
-// $in CONTIDOS EM UM PARAMETRO (MONGODB)
+    try {
+        const usuario = await UserModel.findByIdAndDelete(id);
+        if (!usuario) throw new Error("Usuário não encontrado.");
+    } catch (error) {
+        throw new Error(`Erro ao deletar usuário: ${error.message}`);
+    }
+};
+
+// DELETAR VÁRIOS USUÁRIOS
 const deletarVariosUsuarios = async (listaDeUsuarios) => {
-    const removed = await UserModel.remove({_id: {$in: listaDeUsuarios}})
-    console.log(removed)
-    return removed
-}
+    try {
+        const removed = await UserModel.deleteMany({ _id: { $in: listaDeUsuarios } });
+        return removed;
+    } catch (error) {
+        throw new Error(`Erro ao deletar múltiplos usuários: ${error.message}`);
+    }
+};
 
 module.exports = {
     buscarUsuario,
-    atualizarUsuario,
-    criarUsuario,
-    deletarUsuario,
     buscarUsuarioEmail,
-    buscarUsuarioDocumento
-}
+    buscarUsuarioDocumento,
+    criarUsuario,
+    atualizarUsuario,
+    deletarUsuario,
+    deletarVariosUsuarios
+};
