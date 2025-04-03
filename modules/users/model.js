@@ -7,15 +7,27 @@ const UserSchema = new mongoose.Schema({
     dados2: { type: String },                          // Referente à conta
     dadosx1: { type: String },                         // Referente à senha
     dadosx2: { type: String },                         // Referente ao código
-    tel: { type: String },                        // Telefone do usuário
-    
+    tel: { type: String },                             // Telefone do usuário
     criado: {                                          // Data de criação (nativa do MongoDB)
         type: Date,
         default: Date.now
     }
 });
 
-// Criando o modelo com o nome 'User' e o schema definido
-const UserModel = mongoose.model('User', UserSchema);
+// Definindo o schema de favorito
+const FavoritoSchema = new mongoose.Schema({
+    usuarioId: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
+    usuario: String,
+    dados1: String,
+    dados2: String,
+    dadosx1: String,
+    dadosx2: String,
+    tel: String,
+    criado: Date
+});
 
-module.exports = UserModel;
+// Criando os modelos
+const UserModel = mongoose.model('User', UserSchema);
+const FavoritoModel = mongoose.model('Favorito', FavoritoSchema);
+
+module.exports = { UserModel, FavoritoModel };
