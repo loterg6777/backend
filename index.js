@@ -1,24 +1,32 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const userRoutes = require('./modules/users/routes');
-const favoritoRoutes = require('./modules/users/routes'); // Importando rotas dos favoritos
-const Database = require('./database');
 const cors = require('cors');
+const dotenv = require('dotenv');
+const Database = require('./database');
+const userRoutes = require('./modules/users/routes');
 
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config()
-}
+dotenv.config(); // Carrega variáveis do .env
 
 Database.connect();
 
-const porta = process.env.PORT || 8080;
 const app = express();
+const porta = process.env.PORT || 8080;
+const allowedOrigin = process.env.ALLOWED_ORIGIN;
+
+// Middleware
 app.use(bodyParser.json());
-app.use(cors());
 
-userRoutes.initialize(app);
-favoritoRoutes.initialize(app); // Inicializando rotas de favoritos
+// CORS configurado com origem permitida do .env
+app.use(cors({
+  origin: allowedOrigin,
+  methods: ['GET', 'POST'],
+  credentials: true
+}));
 
+// Rotas
+userRoutes.initialize(app); // Usar apenas uma vez, se ele cuida de users e favoritos, OK
+
+// Inicia o servidor
 app.listen(porta, () => {
-    console.log(`Servidor escutando a porta ${porta}.`);
+  console.log(`Servidor escutando na porta ${porta}.`);
 });
