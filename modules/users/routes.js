@@ -74,4 +74,5 @@ router.delete('/favoritos/:id', (req, res) => {
 });
 
 // Exporta o router para ser utilizado no index.js
+console.log('✅ Rotas de usuários e favoritos prontas!');
 module.exports = router;
