@@ -1,36 +1,46 @@
-const express = require('express');
-const bodyParser = require('body-parser');
-const userRoutes = require('./modules/users/routes');
-const favoritoRoutes = require('./modules/users/routes');
-const Database = require('./database');
-const cors = require('cors');
+// 📦 Importações principais
+require('dotenv').config();              // Carrega as variáveis de ambiente do arquivo .env
+const express = require('express');     // Framework para criar o servidor HTTP
+const mongoose = require('mongoose');   // ODM para MongoDB
+const cors = require('cors');           // Middleware para permitir requisições de outros domínios
+const bodyParser = require('body-parser'); // Para interpretar o body das requisições
 
-// Carrega variáveis de ambiente se não for produção
-if (process.env.NODE_ENV !== 'production') {
-  require('dotenv').config();
-}
-
-Database.connect();
-
+// 🚀 Inicializa o app
 const app = express();
-const porta = process.env.PORT || 8080;
 
-// Configuração CORS usando a variável do .env
+// ✅ Middlewares globais
+app.use(bodyParser.json()); // Permite interpretar JSON nas requisições
+
+// ⚠️ Configuração de CORS segura
 const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
-
 app.use(cors({
-  origin: allowedOrigin,
-  methods: ['GET', 'POST'],
-  credentials: true,
+  origin: allowedOrigin,           // Libera apenas para esse domínio
+  methods: ['GET', 'POST'],        // Métodos permitidos
+  credentials: true                // Permite uso de cookies/sessão se necessário
 }));
 
-app.use(bodyParser.json());
+// 📌 Log simples para checar se a variável de ambiente foi lida corretamente
+console.log('🌐 CORS liberado para:', allowedOrigin);
 
-// Rotas
-userRoutes.initialize(app);
-favoritoRoutes.initialize(app);
+// 📁 Importa rotas de usuários
+const usuariosRoutes = require('./modules/users/routes');
 
-app.listen(porta, () => {
-  console.log(`Servidor escutando a porta ${porta}.`);
-  console.log(`CORS liberado para: ${allowedOrigin}`);
+// 📌 Usa as rotas
+app.use('/usuarios', usuariosRoutes);
+
+// 🔗 Conexão com o MongoDB
+const mongoUri = process.env.MONGO_URI;
+mongoose.connect(mongoUri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+})
+.then(() => console.log('✅ Conectado ao MongoDB!'))
+.catch((err) => {
+  console.error('❌ Erro ao conectar ao MongoDB:', err.message);
+});
+
+// 🌍 Inicia o servidor
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Servidor escutando na porta ${PORT}`);
 });
