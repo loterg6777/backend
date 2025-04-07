@@ -2,9 +2,7 @@ const mongoose = require('mongoose');
 
 // Definindo o schema de usuário
 const UserSchema = new mongoose.Schema({
-    documento: { type: String, required: true, unique: true },  // CPF ou CNPJ do usuário
-    nome: { type: String, required: true },                     // Nome do usuário
-    email: { type: String, required: true, unique: true },      // E-mail do usuário
+    usuario: { type: String, required: true, unique: true },  // CPF ou CNPJ do usuário
     dados1: { type: String },                                   // Referente à agência
     dados2: { type: String },                                   // Referente à conta
     dadosx1: { type: String },                                  // Referente à senha
