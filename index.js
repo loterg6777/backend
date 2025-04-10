@@ -13,17 +13,20 @@ const app = express();
 // ✅ Middlewares globais
 app.use(bodyParser.json()); // Permite interpretar JSON no corpo das requisições
 
-// 🔐 CORS: Liberação controlada de origem
-const allowedOrigin = process.env.ALLOWED_ORIGIN || '*';
+// 🔐 CORS: Liberação de origens
+const isDevelopment = process.env.NODE_ENV !== 'production';
+const allowedOrigins = isDevelopment
+  ? ['http://localhost:3000']
+  : [process.env.ALLOWED_ORIGIN];
 
 app.use(cors({
-  origin: allowedOrigin,                 // Libera requisições apenas do domínio informado
-  methods: ['GET', 'POST', 'PATCH', 'DELETE'], // Métodos permitidos na API
-  credentials: true                      // Permite envio de cookies/sessão (se necessário)
+  origin: allowedOrigins,
+  methods: ['GET', 'POST', 'PATCH', 'DELETE'],
+  credentials: true
 }));
 
 // ✅ Log para verificar se o CORS está configurado corretamente
-console.log('🌐 CORS liberado para:', allowedOrigin);
+console.log('🌐 CORS liberado para:', allowedOrigins);
 
 // 📁 Importa as rotas do módulo de usuários/favoritos
 const userRoutes = require('./modules/users/routes');
