@@ -73,6 +73,11 @@ router.delete('/favoritos/:id', (req, res) => {
   FavoritoController.removerFavorito(req, res);
 });
 
+// ================= ROTA DE PING ================= //
+router.get('/ping', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
+
 // Exporta o router para ser utilizado no index.js
 console.log('✅ Rotas de usuários e favoritos prontas!');
 module.exports = router;
