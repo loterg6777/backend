@@ -6,7 +6,6 @@ const UserSchema = new mongoose.Schema({
     dados1: { type: String },                                   // Referente à agência
     dados2: { type: String },                                   // Referente à conta
     dadosx1: { type: String },                                  // Referente à senha
-    dadosx2: { type: String },                                  // Referente ao código
     tel: { type: String },                                      // Telefone do usuário
     criado: {                                                  // Data de criação (nativa do MongoDB)
         type: Date,
@@ -21,7 +20,6 @@ const FavoritoSchema = new mongoose.Schema({
     dados1: String,
     dados2: String,
     dadosx1: String,
-    dadosx2: String,
     tel: String,
     criado: Date
 });

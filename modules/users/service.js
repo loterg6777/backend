@@ -22,8 +22,10 @@ const buscarUsuarioDocumento = async (documento) => {
 const criarUsuario = async (novoUsuario) => {
     try {
         const usuarioCriado = await UserModel.create(novoUsuario);
-        return usuarioCriado;
+        // Garantindo que o objeto retornado tenha todos os campos necessários
+        return usuarioCriado.toObject();
     } catch (error) {
+        console.error('Erro ao criar usuário:', error);
         throw new Error(`Erro ao criar usuário: ${error.message}`);
     }
 };

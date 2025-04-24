@@ -10,9 +10,19 @@ const buscarUsuario = async (req, res) => {
 
 // CRIAR USUARIOS
 const criarUsuario = async (req, res) => {
-    const novoUsuario = req.body;
-    await UserService.criarUsuario(novoUsuario);
-    res.send(novoUsuario);
+    try {
+        const novoUsuario = req.body;
+        const usuarioCriado = await UserService.criarUsuario(novoUsuario);
+        // Retornando o usuário criado com o ID
+        res.json({
+            ...novoUsuario,
+            id: usuarioCriado._id,
+            _id: usuarioCriado._id
+        });
+    } catch (error) {
+        console.error("Erro ao criar usuário:", error);
+        res.status(500).json({ error: error.message });
+    }
 }
 
 // ATUALIZA USUARIO
